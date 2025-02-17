@@ -20,7 +20,7 @@ export const formatSpreadsheetData = (
     .map(() => Array(columnLabels.length).fill({ value: "" }));
 
   data.forEach((cell) => {
-    const rowIndex = rowLabels.indexOf(cell.col);
+    const rowIndex = rowLabels.indexOf(cell.row.toString());
     const colIndex = columnLabels.indexOf(cell.col);
     if (rowIndex >= 0 && colIndex >= 0) {
       matrix[rowIndex][colIndex] = { value: cell.value };

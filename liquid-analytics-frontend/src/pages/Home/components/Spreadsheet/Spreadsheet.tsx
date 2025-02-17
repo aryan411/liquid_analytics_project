@@ -38,7 +38,6 @@ const Spreadsheet = ({
   );
 
   useEffect(() => {
-    // debugger
     const newData = formatSpreadsheetData(data, rowLabels, columnLabels);
     setFormattedData(newData);
   }, [data, rowLabels, columnLabels]);
@@ -87,7 +86,6 @@ const Spreadsheet = ({
       });
 
       // Update cell
-      // debugger
       updateCell({
         row: rowLabels[coords.row],
         col: columnLabels[coords.column],
@@ -118,4 +116,13 @@ const Spreadsheet = ({
   );
 };
 
-export const MemoizedSpreadsheet = memo(Spreadsheet);
+export const MemoizedSpreadsheet = memo(Spreadsheet, (prevProps, nextProps) => {
+  debugger
+  return (
+    prevProps.isAdd === nextProps.isAdd &&
+    prevProps.isMulti === nextProps.isMulti &&
+    JSON.stringify(prevProps.data) === JSON.stringify(nextProps.data) &&
+    JSON.stringify(prevProps.rowLabels) === JSON.stringify(nextProps.rowLabels) &&
+    JSON.stringify(prevProps.columnLabels) === JSON.stringify(nextProps.columnLabels)
+  );
+});

@@ -1,9 +1,11 @@
 // src/pages/Home/Home.tsx
-import React, { useState } from "react";
-import { MemoizedSpreadsheet } from "./components";
+import React, { useEffect, useState } from "react";
+import { MemoizedSpreadsheet as Spreadsheet } from "./components";
 import { Button } from "../../components";
+import { useSpreadsheetSync } from "../../hooks/useSpreadsheetSync";
 
 export const Home: React.FC = () => {
+  const { data, isConnected, updateCell } = useSpreadsheetSync();
   const [isAdd, setIsAdd] = useState(false);
   const [isMulti, setIsMulti] = useState(false);
 
@@ -11,30 +13,36 @@ export const Home: React.FC = () => {
     String.fromCharCode(65 + i)
   );
 
+  //   console.log(data, isConnected, updateCell);
+
   const rowLabels = Array.from({ length: 10 }, (_, i) => `${i + 1}`);
 
-  const initialData: any = [];
+  //   const initialData: any = [];
 
-const handleUpdateCell = (param: {
+  useEffect(() => {
+    console.log(isConnected, data);
+  }, [isConnected, data]);
+  const handleUpdateCell = (param: {
     row: string;
     col: string;
     value: string;
   }) => {
     console.log("Cell updated:", param);
+    updateCell({ ...param, row: Number(param.row) });
 
     // isAdd && setIsAdd(false);
     // !isMulti  && setIsMulti(false);
-    // setIsMulti(false);
-  };  
+    // isMulti && setIsMulti(false);
+  };
 
   const handleAddition = () => {
     setIsAdd(true);
-    console.log("Addition mode activated");
+    // console.log("Addition mode activated");
   };
 
   const handleMultiplication = () => {
     setIsMulti(true);
-    console.log("Multiplication mode activated");
+    // console.log("Multiplication mode activated");
   };
 
   return (
@@ -56,8 +64,8 @@ const handleUpdateCell = (param: {
             Multiplication
           </Button>
         </div>
-        <MemoizedSpreadsheet
-          data={initialData}
+        <Spreadsheet
+          data={data.map((obj) => ({ ...obj, row: obj.row.toString() }))}
           columnLabels={columnLabels}
           rowLabels={rowLabels}
           updateCell={handleUpdateCell}
