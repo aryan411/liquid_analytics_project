@@ -1,16 +1,14 @@
-import { Matrix, RangeSelection } from "react-spreadsheet";
+import { Matrix, Point, RangeSelection } from "react-spreadsheet";
 
 export const calculateRangeStats = (
-  rangeObj: RangeSelection,
+  rangeObj: { start:Point, end:Point },
   columnLabels: String[],
   rowLabels: String[],
   formattedData: Matrix<{ value: string }>
 ) => {
-  const { range } = rangeObj;
 
-  if (!range?.start || !range.end) return;
 
-  const { start, end } = range;
+  const { start, end } = rangeObj;
   // Get range dimensions
   const rowCount = end.row - start.row + 1;
   const colCount = end.column - start.column + 1;
@@ -33,7 +31,7 @@ export const calculateRangeStats = (
       const cellValue = formattedData?.[row]?.[col]?.value;
       const number = Number(cellValue);
 
-      if (!isNaN(number) && cellValue !== undefined && cellValue !== null) {
+      if (!isNaN(number) && cellValue !== undefined && cellValue !== null && cellValue !== "") {
         sum += number;
         product *= number;
         validNumbers++;
@@ -50,4 +48,9 @@ export const calculateRangeStats = (
       // invalidCells,
     });
   }
+  return {
+    sum,
+    product,
+    validNumbers,
+  };
 };

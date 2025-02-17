@@ -17,12 +17,12 @@ export const Button = ({
   className = '', 
   ...props 
 }: ButtonProps) => {
-  const baseStyles = 'font-medium rounded-lg focus:ring-2 focus:ring-offset-2 transition-colors';
+  const baseStyles = 'font-medium rounded-lg transition-all duration-200 hover:ring-2 hover:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variants = {
-    primary: 'bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500',
-    secondary: 'bg-secondary-500 text-white hover:bg-secondary-600 focus:ring-secondary-500',
-    outline: 'border-2 border-primary-500 text-primary-500 hover:bg-primary-50 focus:ring-primary-500'
+    primary: 'bg-indigo-600 hover:ring-indigo-500 text-white ',
+    secondary: 'bg-emerald-600 hover:ring-emerald-500 text-white',
+    outline: 'border-2 border-indigo-600 text-indigo-600 hover:ring-indigo-500 '
   };
 
   const sizes = {
@@ -33,7 +33,15 @@ export const Button = ({
 
   return (
     <button
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`
+        ${baseStyles} 
+        ${variants[variant]} 
+        ${sizes[size]}
+        ${className}
+        shadow-sm
+        hover:shadow-md
+        active:scale-95
+      `}
       {...props}
     >
       {children}
