@@ -1,12 +1,19 @@
 import { Matrix, Point } from "react-spreadsheet";
 
+/**
+ * Calculates statistics (sum, product, count) for a selected range of cells in a spreadsheet
+ * @param rangeObj - Object containing start and end points of the selected range
+ * @param columnLabels - Array of column labels (A, B, C etc)
+ * @param rowLabels - Array of row labels/indices
+ * @param formattedData - Matrix of cell data containing string values
+ * @returns Object containing sum, product and count of valid numbers in the range
+ */
 export const calculateRangeStats = (
   rangeObj: { start:Point, end:Point },
   columnLabels: String[],
   rowLabels: String[],
   formattedData: Matrix<{ value: string }>
 ) => {
-
 
   const { start, end } = rangeObj;
   // Get range dimensions

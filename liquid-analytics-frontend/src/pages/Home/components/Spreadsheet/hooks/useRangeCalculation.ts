@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react";
 import { Matrix, Point, RangeSelection } from "react-spreadsheet";
 import { calculateRangeStats } from "../../../../../utils";
+import { CellData } from "../../../../../types";
 
-// type RangeSelection = {
-//   start: Point;
-//   end: Point;
-// };
 
-type CellData = {
-  row: string;
-  col: string;
-  value: string;
-};
 
+
+/**
+ * Custom hook for handling range calculations in a spreadsheet
+ * @param formattedData - Matrix of cell data with string values
+ * @param setFormattedData - Function to update the formatted data matrix
+ * @param isAdd - Boolean flag indicating if addition mode is active
+ * @param isMulti - Boolean flag indicating if multiplication mode is active
+ * @param updateCell - Callback function to update a cell's value
+ * @param rowLabels - Array of row labels
+ * @param columnLabels - Array of column labels
+ * @param updateButtonsState - Function to reset button states
+ * @returns Object containing setSelectedRange function
+ */
 export const useRangeCalculation = (
   formattedData: Matrix<{ value: string }>,
   setFormattedData: any,
@@ -20,7 +25,8 @@ export const useRangeCalculation = (
   isMulti: boolean,
   updateCell: (param: CellData) => void,
   rowLabels: string[],
-  columnLabels: string[]
+  columnLabels: string[],
+  updateButtonsState:()=>void
 ) => {
   const [selectedRange, setSelectedRange] = useState<RangeSelection | null>(
     null
@@ -32,41 +38,57 @@ export const useRangeCalculation = (
       !formattedData.length ||
       (!isAdd && !isMulti)
     )
-      return;
+      {
+        updateButtonsState();
+        return;
+    }
     const { start, end } = selectedRange.range;
-
+    
     // Find best cell to put result
     const findBestCell = (): Point => {
-      const possibleCells: Point[] = [
-        { row: start.row - 1, column: start.column }, // Top
-        { row: end.row + 1, column: end.column }, // Bottom
-        { row: start.row, column: end.column + 1 }, // Right
-        { row: end.row, column: start.column - 1 }, // Left
-      ];
-
-      // Filter valid cells (within grid bounds)
-      const validCells = possibleCells.filter(
-        (cell) =>
-          cell.row >= 0 &&
-          cell.row < formattedData.length &&
-          cell.column >= 0 &&
-          cell.column < formattedData[0].length
-      );
-
-      // Priority check function
-      const getCellPriority = (cell: Point): number => {
-        const value = formattedData[cell.row][cell.column]?.value;
-        if (!value || value === "") return 1; // Empty cells highest priority
-        if (isNaN(Number(value))) return 2; // String cells medium priority
-        return 3; // Number cells lowest priority
+        // Check if single row selection
+        const isSingleRow = start.row === end.row;
+      
+        if (isSingleRow) {
+          // For single row, try rightmost's next cell first
+          const rightNext: Point = {
+            row: start.row,
+            column: end.column + 1
+          };
+      
+          // Check if right next cell is valid
+          if (
+            rightNext.row >= 0 &&
+            rightNext.row < formattedData.length &&
+            rightNext.column >= 0 &&
+            rightNext.column < formattedData[0].length
+          ) {
+            return rightNext;
+          }
+        }
+      
+        // If not single row or right next not valid, try bottom right's below cell
+        const bottomRightBelow: Point = {
+          row: end.row + 1,
+          column: end.column
+        };
+      
+        // Check if bottom right below cell is valid
+        if (
+          bottomRightBelow.row >= 0 &&
+          bottomRightBelow.row < formattedData.length &&
+          bottomRightBelow.column >= 0 &&
+          bottomRightBelow.column < formattedData[0].length
+        ) {
+          return bottomRightBelow;
+        }
+      
+        // Last resort: top right's top cell
+        return {
+          row: start.row - 1,
+          column: end.column
+        };
       };
-
-      // Sort by priority and return best cell
-      return validCells.sort(
-        (a, b) => getCellPriority(a) - getCellPriority(b)
-      )[0];
-    };
-
     // Execute calculation and update
     const bestCell = findBestCell();
     if (bestCell) {
@@ -89,6 +111,7 @@ export const useRangeCalculation = (
       });
       setSelectedRange(null);
     }
+    else updateButtonsState()
   }, [isAdd, isMulti]);
 
   return { setSelectedRange };

@@ -7,14 +7,8 @@ import {
 } from "react-spreadsheet";
 import { formatSpreadsheetData } from "../../../../utils/formateSpreadsheetData";
 import { useDebouncedCallback } from "use-debounce";
-import { calculateRangeStats } from "../../../../utils";
 import { useRangeCalculation } from "./hooks/useRangeCalculation";
-
-type CellData = {
-  row: string;
-  col: string;
-  value: string;
-};
+import { CellData } from "../../../../types";
 
 type SpreadsheetProps = {
   updateCell: (param: CellData) => void;
@@ -23,8 +17,22 @@ type SpreadsheetProps = {
   data: CellData[];
   isAdd: boolean;
   isMulti: boolean;
+  updateButtonsState:()=>void
 };
 
+/**
+ * Spreadsheet component that provides an interactive spreadsheet interface with cell editing and range selection capabilities
+ * @component
+ * @param {Object} props - Component props
+ * @param {Function} props.updateCell - Callback function to update cell data
+ * @param {string[]} props.rowLabels - Array of row labels
+ * @param {string[]} props.columnLabels - Array of column labels
+ * @param {CellData[]} props.data - Array of cell data objects
+ * @param {boolean} props.isAdd - Flag indicating if addition mode is active
+ * @param {boolean} props.isMulti - Flag indicating if multiplication mode is active
+ * @param {Function} props.updateButtonsState - Callback to update button states
+ * @returns {JSX.Element} Spreadsheet component
+ */
 const Spreadsheet = ({
   updateCell,
   rowLabels,
@@ -32,6 +40,7 @@ const Spreadsheet = ({
   data,
   isAdd,
   isMulti,
+  updateButtonsState
 }: SpreadsheetProps) => {
   const [formattedData, setFormattedData] = useState<Matrix<{ value: string }>>(
     []
@@ -51,6 +60,7 @@ const Spreadsheet = ({
     updateCell,
     rowLabels,
     columnLabels,
+    updateButtonsState
   );
   const [previousCommit, setPreviousCommit] = useState<{
     prevValue: string | undefined | null;
@@ -96,12 +106,14 @@ const Spreadsheet = ({
   const debouncedSelect = useDebouncedCallback((selected: RangeSelection) => {
        // Check if multiple columns are selected
        if(!selected?.range) return;
-       const columnCount = selected.range?.start.column - selected?.range.start.column + 1;
+       const columnCount = selected.range?.end.column - selected?.range.start.column + 1;
        const rowCount= selected.range.end.row - selected.range.start.row + 1;
        if (columnCount <= 1 && rowCount <= 1) return;
        setSelectedRange(selected as any);
     // calculateRangeStats(selected, columnLabels, rowLabels, formattedData);
   }, 500);
+
+
 
   return (
     <ReactSpreadsheet
@@ -114,10 +126,17 @@ const Spreadsheet = ({
       // onBlur={() => setSelectedRange(null)}
     />
   );
+
 };
 
+/**
+ * Memoized version of the Spreadsheet component to optimize rendering performance
+ * @component
+ * @param {SpreadsheetProps} prevProps - Previous props
+ * @param {SpreadsheetProps} nextProps - Next props
+ * @returns {boolean} Whether the component should update
+ */
 export const MemoizedSpreadsheet = memo(Spreadsheet, (prevProps, nextProps) => {
-  debugger
   return (
     prevProps.isAdd === nextProps.isAdd &&
     prevProps.isMulti === nextProps.isMulti &&

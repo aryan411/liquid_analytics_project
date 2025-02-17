@@ -1,11 +1,13 @@
 import type { Matrix } from "react-spreadsheet";
+import { CellData } from "../types";
 
-type CellData = {
-  row: string;
-  col: string;
-  value: string;
-};
-
+/**
+ * Formats cell data into a matrix structure for the spreadsheet component
+ * @param data - Array of cell data containing row, column and value information
+ * @param rowLabels - Array of row labels/indices It should be number
+ * @param columnLabels - Array of column labels (A, B, C etc)
+ * @returns Matrix of cell objects with string values formatted for the spreadsheet
+ */
 export const formatSpreadsheetData = (
   data: CellData[],
   rowLabels: string[],

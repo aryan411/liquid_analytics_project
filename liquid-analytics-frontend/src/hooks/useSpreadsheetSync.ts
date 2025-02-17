@@ -1,17 +1,28 @@
 import { useState, useEffect, useCallback } from "react";
 import { WebSocketService } from "../services/WebSocket";
 
-type CellData = {
+type Data = {
   row: number;
   col: string;
   value: string;
 };
 
+/**
+ * Custom hook for managing WebSocket-based spreadsheet synchronization
+ * @returns {Object} An object containing:
+ * - data: Array of cell data with row, column and value information
+ * - isConnected: Boolean indicating WebSocket connection status
+ * - updateCell: Function to send cell updates through WebSocket
+ */
 export const useSpreadsheetSync = () => {
-  const [data, setData] = useState<CellData[]>([]);
+  const [data, setData] = useState<Data[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [ws, setWs] = useState<WebSocketService | null>(null);
 
+  /**
+   * Handles incoming WebSocket messages
+   * @param {any} message - The received WebSocket message
+   */
   const handleMessage = useCallback((message: any) => {
     if (message.type === "initial") {
       setData(message.data);
@@ -33,6 +44,9 @@ export const useSpreadsheetSync = () => {
     }
   }, []);
 
+  /**
+   * Handles successful WebSocket connection
+   */
   const handleConnect = useCallback(() => {
     setIsConnected(true);
   }, []);
@@ -50,7 +64,11 @@ export const useSpreadsheetSync = () => {
     };
   }, [handleMessage, handleConnect]);
 
-  const updateCell = (cellData: CellData) => {
+  /**
+   * Sends cell update through WebSocket
+   * @param {Data} cellData - The cell data to update
+   */
+  const updateCell = (cellData: Data) => {
     ws?.sendMessage(cellData);
   };
 
