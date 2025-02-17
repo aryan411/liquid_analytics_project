@@ -8,6 +8,34 @@ export class DatabaseService {
     this.connection = db.connect();
   }
 
+  async getAllData(): Promise<CellData[]> {
+    return new Promise((resolve, reject) => {
+        const query = `
+            SELECT 
+               *
+            FROM liquid_sheets 
+            ORDER BY row, col;
+        `;
+
+        this.connection.all(
+            query,
+            (err: Error | null, results) => {
+                if (err) {
+                    console.error("DB Error:", err);
+                    reject(err);
+                } else {
+                    const cellData: CellData[] = results.map(row => ({
+                        row: row.row,
+                        col: row.col,
+                        value: row.value
+                    }));
+                    resolve(cellData);
+                }
+            }
+        );
+    });
+}
+
   async updateCell(data: CellData): Promise<boolean> {
     return new Promise((resolve, reject) => {
       try {
