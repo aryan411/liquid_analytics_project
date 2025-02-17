@@ -14,8 +14,17 @@ export class WebSocketService {
     }
 
     private initialize() {
-        this.wss.on('connection', (ws: WebSocket) => {
+        this.wss.on('connection', async (ws: WebSocket) => {
             console.log('Client connected');
+            
+            // Send initial data when client connects
+            try {
+                const allData = await this.dbService.getAllData();
+                ws.send(JSON.stringify({ type: 'initial', data: allData }));
+            } catch (error) {
+                console.error('Error sending initial data:', error);
+                ws.send(JSON.stringify({ error: 'Failed to load initial data' }));
+            }
 
             ws.on('message', async (message: string) => {
                 try {
@@ -42,7 +51,7 @@ export class WebSocketService {
     private broadcastUpdate(data: CellData) {
         this.wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify(data));
+                client.send(JSON.stringify({ type: 'update', data }));
             }
         });
     }
