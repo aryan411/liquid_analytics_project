@@ -10,8 +10,8 @@ import { Matrix, Point } from "react-spreadsheet";
  */
 export const calculateRangeStats = (
   rangeObj: { start:Point, end:Point },
-  columnLabels: String[],
-  rowLabels: String[],
+  columnLabels: string[],
+  rowLabels: string[],
   formattedData: Matrix<{ value: string }>
 ) => {
 

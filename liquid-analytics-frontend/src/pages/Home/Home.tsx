@@ -10,7 +10,7 @@ import { useSpreadsheetSync } from "../../hooks/useSpreadsheetSync";
  * @returns {JSX.Element} A page containing a spreadsheet and control buttons
  */
 export const Home: React.FC = () => {
-  const { data, isConnected,updateCell } = useSpreadsheetSync();
+  const { data,updateCell } = useSpreadsheetSync();
   const [isAdd, setIsAdd] = useState(false);
   const [isMulti, setIsMulti] = useState(false);
 
@@ -35,7 +35,7 @@ export const Home: React.FC = () => {
     value: string;
   }) => {
     console.log("Cell updated:", param);
-    isConnected &&  updateCell({ ...param, row: Number(param.row) });
+    updateCell({ ...param, row: Number(param.row) });
     updateButtonsState()
   };
 
@@ -79,10 +79,10 @@ const updateButtonsState = () => {
   return (
     <div className="p-4 h-screen">
       <div className="flex flex-col">
-        <div className="flex justify-start space-x-4 mb-4">
+        <div className="flex justify-end space-x-4 mb-4">
           <Button
             onClick={handleAddition}
-            variant={isAdd ? "primary" : "outline"}
+            variant={isAdd ? "primary" : "new"}
             disabled={isAdd}
             size="sm"
           >
@@ -91,7 +91,7 @@ const updateButtonsState = () => {
           <Button
             onClick={handleMultiplication}
             disabled={isMulti}
-            variant={isMulti ? "secondary" : "outline"}
+            variant={isMulti ? "secondary" : "new"}
             size="sm"
           >
             Multiplication

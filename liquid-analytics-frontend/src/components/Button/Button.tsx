@@ -1,7 +1,7 @@
 // src/components/Button/Button.tsx
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline';
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'new';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -22,7 +22,8 @@ export const Button = ({
   const variants = {
     primary: 'bg-indigo-600 hover:ring-indigo-500 text-white ',
     secondary: 'bg-emerald-600 hover:ring-emerald-500 text-white',
-    outline: 'border-2 border-indigo-600 text-indigo-600 hover:ring-indigo-500 '
+    outline: 'border-2 border-indigo-600 text-indigo-600 hover:ring-indigo-500 ',
+    new: "border-2 bg-red-600 border-indigo-600 text-white hover:ring-indigo-500"
   };
 
   const sizes = {
