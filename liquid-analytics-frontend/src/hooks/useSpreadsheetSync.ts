@@ -18,7 +18,8 @@ export const useSpreadsheetSync = () => {
   const [data, setData] = useState<Data[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [ws, setWs] = useState<WebSocketService | null>(null);
-
+  const baseURL = import.meta.env.VITE_BASE_URL;
+  console.log(import.meta.env)
   /**
    * Handles incoming WebSocket messages
    * @param {any} message - The received WebSocket message
@@ -52,8 +53,9 @@ export const useSpreadsheetSync = () => {
   }, []);
 
   useEffect(() => {
+    console.log(baseURL)
     const wsService = new WebSocketService(
-      "ws://localhost:3000",
+      baseURL || "",
       handleMessage,
       handleConnect
     );

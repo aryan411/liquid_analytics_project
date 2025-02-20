@@ -109,7 +109,7 @@ const Spreadsheet = ({
        const columnCount = selected.range?.end.column - selected?.range.start.column + 1;
        const rowCount= selected.range.end.row - selected.range.start.row + 1;
        if (columnCount <= 1 && rowCount <= 1) return;
-       setSelectedRange(selected as any);
+       setSelectedRange(selected);
     // calculateRangeStats(selected, columnLabels, rowLabels, formattedData);
   }, 500);
 
