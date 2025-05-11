@@ -221,6 +221,7 @@ npm run dev
 - ReadME first commit - feature
 - ReadMe second commit - feature
 
+- Bugfix - First commit
 
 
 
